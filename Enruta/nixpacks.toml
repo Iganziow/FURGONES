@@ -1,0 +1,16 @@
+[phases.setup]
+packages = [
+  "python3",
+  "postgresql",  # Para obtener pg_config
+  "gcc"
+]
+
+[phases.install]
+cmds = [
+  "python -m venv /opt/venv",
+  ". /opt/venv/bin/activate",
+  "pip install --no-cache-dir -r requirements.txt"
+]
+
+[phases.start]
+cmd = "gunicorn Enruta.wsgi:application --bind 0.0.0.0:$PORT"
