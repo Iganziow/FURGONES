@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Furgones</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'menu_principal' %}">Gestión de Furgones</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'menu_principal' %}">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'lista_furgones' %}">Ver Furgones</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h1 class="text-center">Lista de Furgones</h1>
+        <div class="text-end mb-3">
+            <a href="{% url 'agregar_furgon' %}" class="btn btn-primary">Agregar Furgón</a>
+        </div>
+
+        <form method="get" class="mb-3">
+            <label for="fecha">Seleccionar Fecha:</label>
+            <input type="date" name="fecha" id="fecha" value="{{ request.GET.fecha }}" class="form-control w-25 d-inline">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+        </form>
+
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Patente</th>
+                    <th>Capacidad</th>
+                    <th>Conductor</th>
+                    <th>Pasajeros</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for furgon in furgones %}
+                <tr>
+                    <td>{{ furgon.patente }}</td>
+                    <td>{{ furgon.capacidad }}</td>
+                    <td>{{ furgon.conductor }}</td>
+                    <td>
+                        {% with request.GET.fecha as filtro_fecha %}
+                            {% if filtro_fecha %}
+                                <ul>
+                                    {% for pasajero in furgon.pasajeros.all %}
+                                        {% if pasajero.fecha|date:"Y-m-d" == filtro_fecha %}
+                                            <li>
+                                                {{ pasajero.nombre }}
+                                                {% if pasajero.asistencia %}
+                                                    ✅ Asistió
+                                                {% else %}
+                                                    ❌ No asistió
+                                                {% endif %}
+                                                {% if pasajero.comentario %}
+                                                    <br><small class="text-muted">Comentario: {{ pasajero.comentario }}</small>
+                                                {% endif %}
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <ul>
+                                    {% for pasajero in furgon.pasajeros.all %}
+                                        <li>
+                                            {{ pasajero.nombre }}
+                                            {% if pasajero.asistencia %}
+                                                ✅ Asistió
+                                            {% else %}
+                                                ❌ No asistió
+                                            {% endif %}
+                                            {% if pasajero.comentario %}
+                                                <br><small class="text-muted">Comentario: {{ pasajero.comentario }}</small>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        {% endwith %}
+                    </td>
+                    <td>
+                        <a href="{% url 'detalle_furgon' furgon.id %}" class="btn btn-info btn-sm">Ver Detalles</a>
+                        <a href="{% url 'agregar_pasajero' furgon.id %}" class="btn btn-success btn-sm">Agregar Pasajero</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No hay furgones registrados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+</body>
+</html>

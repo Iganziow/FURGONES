@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Furgón</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Gestión de Furgones</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/furgones/">Ver Furgones</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h1 class="text-center">Detalle del Furgón <strong>{{ furgon.patente }}</strong></h1>
+
+        <table class="table table-bordered mt-4">
+            <thead class="table-dark">
+                <tr>
+                    <th>Nombre del Pasajero</th>
+                    <th>Asistencia</th>
+                    <th>Comentario</th>
+                    <th>Guardar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pasajero in pasajeros %}
+                <tr>
+                    <td>{{ pasajero.nombre }}</td>
+                    <td class="text-center">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="pasajero_id" value="{{ pasajero.id }}">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="asistencia" id="asistencia_{{ pasajero.id }}" {% if pasajero.asistencia %}checked{% endif %}>
+                                <label class="form-check-label" for="asistencia_{{ pasajero.id }}">Asistió</label>
+                            </div>
+                    </td>
+                    <td>
+                        <textarea name="comentario" class="form-control" placeholder="Agrega un comentario...">{{ pasajero.comentario }}</textarea>
+                    </td>
+                    <td class="text-center">
+                        <button type="submit" class="btn btn-primary btn-sm">Guardar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted">No hay pasajeros registrados en este furgón.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="text-center mt-3">
+            <a href="/furgones/" class="btn btn-secondary">Volver a la lista de furgones</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
