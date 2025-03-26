@@ -1,7 +1,9 @@
+# nixpacks.toml
+
 [phases.setup]
+# Estos paquetes proporcionan pg_config y un compilador
 packages = [
-  "python3",
-  "postgresql",  # Para obtener pg_config
+  "postgresql", 
   "gcc"
 ]
 
@@ -13,4 +15,5 @@ cmds = [
 ]
 
 [phases.start]
+# Ajusta el comando de inicio según tu proyecto (gunicorn, etc.)
 cmd = "gunicorn Enruta.wsgi:application --bind 0.0.0.0:$PORT"
